@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Services\DashboardService;
-use Illuminate\Http\JsonResponse;
+use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
@@ -11,9 +11,9 @@ class DashboardController extends Controller
     {
     }
 
-    public function index(): JsonResponse
+    public function index(): View
     {
-        return response()->json([
+        return view('dashboard.index', [
             'metrics' => $this->dashboardService->getDashboardMetrics(),
             'chart' => $this->dashboardService->getChartData(),
         ]);

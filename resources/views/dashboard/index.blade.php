@@ -4,6 +4,13 @@
 ])
 
 @section('content')
+    @php
+        $formatMoney = static fn (int $cents): string => number_format($cents / 100, 0, ',', ' ') . ' €';
+        $chartData = $chart['payments_by_month'] ?? [];
+        $labels = array_keys($chartData);
+        $values = array_map(static fn ($value): float => round(((int) $value) / 100, 2), array_values($chartData));
+    @endphp
+
     <section class="space-y-6">
         <div>
             <p class="text-sm font-medium uppercase tracking-wide text-indigo-600">Bienvenue</p>
@@ -14,19 +21,19 @@
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
             <article class="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200">
                 <p class="text-sm text-slate-500">Élèves inscrits</p>
-                <p class="mt-2 text-3xl font-bold text-slate-900">248</p>
+                <p class="mt-2 text-3xl font-bold text-slate-900">{{ $metrics['total_students'] ?? 0 }}</p>
             </article>
             <article class="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200">
                 <p class="text-sm text-slate-500">Classes actives</p>
-                <p class="mt-2 text-3xl font-bold text-slate-900">12</p>
+                <p class="mt-2 text-3xl font-bold text-slate-900">{{ $metrics['active_classes'] ?? 0 }}</p>
             </article>
             <article class="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200">
                 <p class="text-sm text-slate-500">Paiements reçus</p>
-                <p class="mt-2 text-3xl font-bold text-slate-900">3 450 €</p>
+                <p class="mt-2 text-3xl font-bold text-slate-900">{{ $formatMoney((int) ($metrics['paid_total_cents'] ?? 0)) }}</p>
             </article>
             <article class="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200">
                 <p class="text-sm text-slate-500">Restes à payer</p>
-                <p class="mt-2 text-3xl font-bold text-rose-600">980 €</p>
+                <p class="mt-2 text-3xl font-bold text-rose-600">{{ $formatMoney((int) ($metrics['remaining_total_cents'] ?? 0)) }}</p>
             </article>
         </div>
 
@@ -45,15 +52,17 @@
 @push('scripts')
     <script>
         const chartCanvas = document.getElementById('paymentsChart');
+        const paymentLabels = @json($labels);
+        const paymentValues = @json($values);
 
         if (chartCanvas && typeof Chart !== 'undefined') {
             new Chart(chartCanvas, {
                 type: 'line',
                 data: {
-                    labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin'],
+                    labels: paymentLabels,
                     datasets: [{
                         label: 'Versements (€)',
-                        data: [350, 510, 430, 620, 580, 690],
+                        data: paymentValues,
                         borderColor: '#4f46e5',
                         backgroundColor: 'rgba(79, 70, 229, 0.15)',
                         fill: true,
