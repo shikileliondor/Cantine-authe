@@ -24,6 +24,11 @@
 
             <form method="POST" action="{{ route('pin.authenticate') }}" class="mt-8" id="pin-form">
                 @csrf
+
+                @if (session('status'))
+                    <p class="mb-4 rounded-lg border border-emerald-400/30 bg-emerald-500/15 px-3 py-2 text-center text-sm text-emerald-100">{{ session('status') }}</p>
+                @endif
+
                 <label for="pin" class="sr-only">Code PIN</label>
                 <input
                     id="pin"
@@ -71,6 +76,15 @@
 
                 <button type="submit" class="sr-only">Valider</button>
             </form>
+
+            <div class="mt-6 text-center">
+                <a
+                    href="{{ route('pin.setup') }}"
+                    class="inline-flex items-center justify-center rounded-xl border border-indigo-300/40 bg-indigo-500/15 px-4 py-2 text-sm font-medium text-indigo-100 transition hover:bg-indigo-500/25"
+                >
+                    Créer / réinitialiser mon mot de passe
+                </a>
+            </div>
         </section>
     </main>
 

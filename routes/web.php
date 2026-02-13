@@ -18,7 +18,7 @@ Route::post('/auth/pin', function (Request $request) {
         'pin' => ['required', 'digits:4'],
     ]);
 
-    $expectedPin = (string) config('app.cantine_pin', '1234');
+    $expectedPin = (string) cache()->get('cantine_pin_override', config('app.cantine_pin', '1234'));
 
     if ($validated['pin'] !== $expectedPin) {
         return back()
@@ -30,6 +30,31 @@ Route::post('/auth/pin', function (Request $request) {
 
     return redirect()->route('dashboard');
 })->name('pin.authenticate');
+
+Route::get('/auth/pin/setup', function () {
+    return view('auth.pin-setup');
+})->name('pin.setup');
+
+Route::post('/auth/pin/setup', function (Request $request) {
+    $validated = $request->validate([
+        'admin_code' => ['required', 'string'],
+        'new_pin' => ['required', 'digits:4', 'confirmed'],
+    ]);
+
+    $expectedAdminCode = (string) config('app.cantine_admin_code', 'admin1234');
+
+    if ($validated['admin_code'] !== $expectedAdminCode) {
+        return back()
+            ->withErrors(['admin_code' => 'Code admin invalide.'])
+            ->withInput();
+    }
+
+    cache()->forever('cantine_pin_override', $validated['new_pin']);
+
+    return redirect()
+        ->route('pin.login')
+        ->with('status', 'PIN mis à jour avec succès.');
+})->name('pin.setup.store');
 
 Route::get('/', function () {
     if (!session('pin_authenticated')) {
