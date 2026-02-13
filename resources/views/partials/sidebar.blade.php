@@ -8,14 +8,9 @@
         ],
         [
             'label' => 'Gestion',
+            'route' => 'gestion.*',
+            'href' => Route::has('gestion.index') ? route('gestion.index') : '#',
             'icon' => 'gestion',
-            'children' => [
-                [
-                    'label' => 'Élèves & classes',
-                    'route' => 'gestion.index',
-                    'href' => Route::has('gestion.index') ? route('gestion.index') : '#',
-                ],
-            ],
         ],
         [
             'label' => 'Comptabilité',
@@ -48,43 +43,8 @@
 
         <nav class="flex-1 space-y-2 px-3 py-4">
             @foreach ($menuItems as $index => $item)
-                @php
-                    $hasChildren = isset($item['children']);
-                    $isActive = $hasChildren
-                        ? collect($item['children'])->contains(fn ($child) => request()->routeIs($child['route']))
-                        : request()->routeIs($item['route']);
-                @endphp
+                @php($isActive = request()->routeIs($item['route']))
 
-                @if ($hasChildren)
-                    @php($submenuId = 'sidebar-submenu-' . $index)
-                    <button
-                        type="button"
-                        data-submenu-toggle="{{ $submenuId }}"
-                        aria-expanded="{{ $isActive ? 'true' : 'false' }}"
-                        class="group flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition {{ $isActive ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}"
-                    >
-                        <span class="flex items-center gap-3">
-                            <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true">
-                                {!! $icons[$item['icon']] !!}
-                            </svg>
-                            <span>{{ $item['label'] }}</span>
-                        </span>
-                        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                        </svg>
-                    </button>
-
-                    <div id="{{ $submenuId }}" class="mt-1 space-y-1 pl-11 {{ $isActive ? '' : 'hidden' }}">
-                        @foreach ($item['children'] as $child)
-                            <a
-                                href="{{ $child['href'] }}"
-                                class="block rounded-lg px-3 py-2 text-sm transition {{ request()->routeIs($child['route']) ? 'bg-slate-800 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}"
-                            >
-                                {{ $child['label'] }}
-                            </a>
-                        @endforeach
-                    </div>
-                @else
                     <a
                         href="{{ $item['href'] }}"
                         class="group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition {{ $isActive ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}"
@@ -94,12 +54,7 @@
                         </svg>
                         <span>{{ $item['label'] }}</span>
                     </a>
-                @endif
             @endforeach
         </nav>
     </div>
 </aside>
-
-@push('scripts')
-    @vite('resources/js/sidebar-submenu.js')
-@endpush

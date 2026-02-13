@@ -17,16 +17,21 @@ class EleveService
     /**
      * Liste les élèves de l'année active (ou d'une année spécifique).
      */
-    public function listStudents(?int $yearId = null): Collection
+    public function listStudents(?int $yearId = null, bool $includeArchived = false): Collection
     {
         $selectedYearId = $yearId ?? $this->yearService->getActiveYear()->id;
 
-        return Student::query()
+        $query = Student::query()
             ->with('schoolClass')
             ->where('school_year_id', $selectedYearId)
             ->orderBy('last_name')
-            ->orderBy('first_name')
-            ->get();
+            ->orderBy('first_name');
+
+        if ($includeArchived) {
+            $query->withTrashed();
+        }
+
+        return $query->get();
     }
 
     /**
@@ -109,6 +114,14 @@ class EleveService
     public function deleteStudent(int $studentId): void
     {
         Student::query()->findOrFail($studentId)->delete();
+    }
+
+    public function restoreStudent(int $studentId): Student
+    {
+        $student = Student::withTrashed()->findOrFail($studentId);
+        $student->restore();
+
+        return $student->fresh(['schoolClass', 'schoolYear']);
     }
 
     /**
