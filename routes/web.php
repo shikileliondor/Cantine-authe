@@ -7,11 +7,9 @@ Route::view('/', 'dashboard.index')->name('dashboard');
 
 Route::get('/gestion', [GestionController::class, 'index'])->name('gestion.index');
 
-Route::view('/comptabilite', 'pages.placeholder', [
-    'title' => 'Comptabilité',
-    'headerTitle' => 'Comptabilité',
-    'pageTitle' => 'Comptabilité',
-])->name('comptabilite.index');
+Route::get('/comptabilite', [ComptabiliteController::class, 'index'])->name('comptabilite.index');
+Route::post('/comptabilite/eleves/{studentId}/versements', [ComptabiliteController::class, 'storePayment'])->name('comptabilite.payments.store');
+Route::post('/comptabilite/eleves/{studentId}/remises', [ComptabiliteController::class, 'storeDiscount'])->name('comptabilite.discounts.store');
 
 Route::view('/parametres', 'pages.placeholder', [
     'title' => 'Paramètres',
