@@ -58,4 +58,9 @@ class EleveController extends Controller
 
         return response()->json([], 204);
     }
+
+    public function restore(int $studentId): JsonResponse
+    {
+        return response()->json($this->eleveService->restoreStudent($studentId));
+    }
 }
