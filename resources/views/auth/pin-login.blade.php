@@ -6,86 +6,84 @@
     <title>Authentification PIN | Cantine</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="min-h-screen bg-slate-950 px-4 py-6 text-slate-100 sm:flex sm:items-center sm:justify-center">
-    <main class="mx-auto w-full max-w-sm rounded-3xl border border-slate-800 bg-slate-900/95 p-6 shadow-2xl shadow-slate-950/60 sm:p-8">
-        <div class="mb-6 text-center">
-            <p class="text-sm uppercase tracking-[0.2em] text-indigo-300">Cantine</p>
-            <h1 class="mt-2 text-2xl font-semibold text-white">Connexion sécurisée</h1>
-            <p class="mt-2 text-sm text-slate-300">Entrez votre code PIN à 4 chiffres.</p>
-        </div>
+<body class="min-h-screen bg-slate-950 text-slate-100">
+    <main class="mx-auto flex min-h-screen w-full max-w-sm items-center justify-center px-5 py-8">
+        <section class="w-full rounded-3xl border border-slate-700/70 bg-gradient-to-b from-slate-900 to-indigo-950 px-7 py-10 shadow-2xl shadow-black/40">
+            <div class="text-center">
+                <h1 class="text-[26px] font-light uppercase tracking-[0.08em] text-white">
+                    Enter <span class="font-semibold text-slate-100">PIN</span> Code
+                </h1>
+                <div class="mt-4 flex justify-center gap-3" aria-hidden="true">
+                    <span class="block h-[2px] w-8 rounded bg-slate-300/70"></span>
+                    <span class="block h-[2px] w-8 rounded bg-slate-300/70"></span>
+                    <span class="block h-[2px] w-8 rounded bg-slate-300/70"></span>
+                    <span class="block h-[2px] w-8 rounded bg-slate-300/70"></span>
+                </div>
+                <p class="mt-4 text-xs uppercase tracking-[0.15em] text-slate-300">3 tentatives restantes</p>
+            </div>
 
-        <form method="POST" action="{{ route('pin.authenticate') }}" class="space-y-5" id="pin-form">
-            @csrf
-
-            <div>
+            <form method="POST" action="{{ route('pin.authenticate') }}" class="mt-8" id="pin-form">
+                @csrf
                 <label for="pin" class="sr-only">Code PIN</label>
-                <div class="relative">
-                    <input
-                        id="pin"
-                        name="pin"
-                        inputmode="numeric"
-                        pattern="[0-9]*"
-                        maxlength="4"
-                        autocomplete="one-time-code"
-                        readonly
-                        value="{{ old('pin', '') }}"
-                        aria-describedby="pin-help"
-                        class="w-full rounded-2xl border border-slate-700 bg-slate-950 px-5 py-4 text-center text-3xl font-semibold tracking-[0.4em] text-white outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-400/35"
-                    >
+                <input
+                    id="pin"
+                    name="pin"
+                    type="password"
+                    inputmode="numeric"
+                    pattern="[0-9]*"
+                    maxlength="4"
+                    autocomplete="one-time-code"
+                    readonly
+                    value="{{ old('pin', '') }}"
+                    class="sr-only"
+                >
+
+                @error('pin')
+                    <p class="mb-4 rounded-lg border border-rose-400/30 bg-rose-500/15 px-3 py-2 text-center text-sm text-rose-100">{{ $message }}</p>
+                @enderror
+
+                <div class="mx-auto grid w-fit grid-cols-3 gap-3" role="group" aria-label="Clavier numérique">
+                    @foreach ([1,2,3,4,5,6,7,8,9] as $digit)
+                        <button
+                            type="button"
+                            class="pin-key h-12 w-12 rounded-lg border border-white/10 bg-slate-600/70 text-xl font-semibold text-white shadow-lg shadow-black/20 transition hover:bg-slate-500/80 active:scale-95"
+                            data-key="{{ $digit }}"
+                        >
+                            {{ $digit }}
+                        </button>
+                    @endforeach
+                    <span aria-hidden="true"></span>
                     <button
-                        id="toggle-pin"
                         type="button"
-                        aria-pressed="false"
-                        class="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg border border-slate-600 px-3 py-1.5 text-xs font-medium text-slate-200 transition hover:bg-slate-800"
+                        class="pin-key h-12 w-12 rounded-lg border border-white/10 bg-slate-600/70 text-xl font-semibold text-white shadow-lg shadow-black/20 transition hover:bg-slate-500/80 active:scale-95"
+                        data-key="0"
                     >
-                        Afficher
+                        0
+                    </button>
+                    <button
+                        type="button"
+                        id="delete-digit"
+                        class="h-12 w-12 rounded-lg border border-white/10 bg-slate-700/70 text-base font-semibold text-white transition hover:bg-slate-600/80 active:scale-95"
+                    >
+                        ⌫
                     </button>
                 </div>
-                <p id="pin-help" class="mt-2 text-xs text-slate-400">Les chiffres sont masqués par défaut pour préserver votre confidentialité.</p>
-                @error('pin')
-                    <p class="mt-3 rounded-xl border border-rose-500/40 bg-rose-500/10 px-3 py-2 text-sm text-rose-200">{{ $message }}</p>
-                @enderror
-            </div>
 
-            <div class="grid grid-cols-3 gap-3" role="group" aria-label="Clavier numérique">
-                @foreach ([1,2,3,4,5,6,7,8,9] as $digit)
-                    <button type="button" class="pin-key rounded-2xl bg-slate-800 px-4 py-4 text-2xl font-semibold text-white shadow-lg shadow-slate-950/40 transition active:scale-95" data-key="{{ $digit }}">{{ $digit }}</button>
-                @endforeach
-                <button type="button" id="clear-pin" class="rounded-2xl border border-slate-600 bg-slate-900 px-4 py-4 text-sm font-semibold text-slate-200">Effacer</button>
-                <button type="button" class="pin-key rounded-2xl bg-slate-800 px-4 py-4 text-2xl font-semibold text-white shadow-lg shadow-slate-950/40 transition active:scale-95" data-key="0">0</button>
-                <button type="button" id="delete-digit" class="rounded-2xl border border-slate-600 bg-slate-900 px-4 py-4 text-sm font-semibold text-slate-200">⌫</button>
-            </div>
-
-            <button type="submit" class="w-full rounded-2xl bg-indigo-500 px-4 py-4 text-base font-semibold text-white shadow-lg shadow-indigo-500/35 transition hover:bg-indigo-400">
-                Valider
-            </button>
-
-            <div class="rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-slate-300">
-                PIN oublié ? Demandez une <span class="font-semibold text-white">réinitialisation admin</span> depuis les paramètres ou contactez l'administrateur de l'école.
-            </div>
-        </form>
+                <button type="submit" class="sr-only">Valider</button>
+            </form>
+        </section>
     </main>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const pinInput = document.getElementById('pin');
             const form = document.getElementById('pin-form');
-            const togglePin = document.getElementById('toggle-pin');
             const keypadButtons = document.querySelectorAll('.pin-key');
-            const clearButton = document.getElementById('clear-pin');
             const deleteButton = document.getElementById('delete-digit');
 
-            if (!pinInput || !form || !togglePin) {
+            if (!pinInput || !form) {
                 return;
             }
-
-            const updateDisplayMode = (isVisible) => {
-                pinInput.type = isVisible ? 'text' : 'password';
-                togglePin.textContent = isVisible ? 'Masquer' : 'Afficher';
-                togglePin.setAttribute('aria-pressed', isVisible ? 'true' : 'false');
-            };
-
-            updateDisplayMode(false);
 
             const appendDigit = (digit) => {
                 if (pinInput.value.length >= 4) {
@@ -93,6 +91,10 @@
                 }
 
                 pinInput.value = `${pinInput.value}${digit}`;
+
+                if (pinInput.value.length === 4) {
+                    form.submit();
+                }
             };
 
             keypadButtons.forEach((button) => {
@@ -101,23 +103,8 @@
                 });
             });
 
-            clearButton?.addEventListener('click', () => {
-                pinInput.value = '';
-            });
-
             deleteButton?.addEventListener('click', () => {
                 pinInput.value = pinInput.value.slice(0, -1);
-            });
-
-            togglePin.addEventListener('click', () => {
-                const shouldShowPin = pinInput.type === 'password';
-                updateDisplayMode(shouldShowPin);
-
-                if (shouldShowPin) {
-                    window.setTimeout(() => {
-                        updateDisplayMode(false);
-                    }, 3000);
-                }
             });
 
             form.addEventListener('submit', (event) => {
