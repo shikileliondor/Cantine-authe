@@ -24,7 +24,7 @@ class DashboardService
         $classesCount = SchoolClass::query()->where('school_year_id', $year->id)->count();
 
         $expectedTotal = Student::query()
-            ->where('school_year_id', $year->id)
+            ->where('students.school_year_id', $year->id)
             ->join('school_classes', 'school_classes.id', '=', 'students.school_class_id')
             ->sum('school_classes.canteen_amount_cents');
 
