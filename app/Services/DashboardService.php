@@ -18,7 +18,19 @@ class DashboardService
      */
     public function getDashboardMetrics(): array
     {
-        $year = $this->yearService->getActiveYear();
+        $year = $this->yearService->getActiveYearOrNull();
+
+        if (! $year) {
+            return [
+                'active_year' => null,
+                'total_students' => 0,
+                'active_classes' => 0,
+                'expected_total_cents' => 0,
+                'paid_total_cents' => 0,
+                'discount_total_cents' => 0,
+                'remaining_total_cents' => 0,
+            ];
+        }
 
         $studentsCount = Student::query()->where('school_year_id', $year->id)->count();
         $classesCount = SchoolClass::query()->where('school_year_id', $year->id)->count();
@@ -47,7 +59,14 @@ class DashboardService
      */
     public function getChartData(): array
     {
-        $year = $this->yearService->getActiveYear();
+        $year = $this->yearService->getActiveYearOrNull();
+
+        if (! $year) {
+            return [
+                'payments_by_month' => [],
+                'discounts_by_month' => [],
+            ];
+        }
 
         $paymentsByMonth = Payment::query()
             ->selectRaw("DATE_FORMAT(paid_at, '%Y-%m') as month, SUM(amount_cents) as total")
