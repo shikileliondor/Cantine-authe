@@ -6,9 +6,38 @@ use App\Http\Controllers\ClasseController;
 use App\Http\Controllers\EleveController;
 use App\Http\Controllers\GestionController;
 use App\Http\Controllers\SettingsController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+Route::get('/auth/pin', function () {
+    return view('auth.pin-login');
+})->name('pin.login');
+
+Route::post('/auth/pin', function (Request $request) {
+    $validated = $request->validate([
+        'pin' => ['required', 'digits:4'],
+    ]);
+
+    $expectedPin = (string) config('app.cantine_pin', '1234');
+
+    if ($validated['pin'] !== $expectedPin) {
+        return back()
+            ->withErrors(['pin' => 'PIN incorrect. Vérifiez votre code puis réessayez.'])
+            ->withInput();
+    }
+
+    $request->session()->put('pin_authenticated', true);
+
+    return redirect()->route('dashboard');
+})->name('pin.authenticate');
+
+Route::get('/', function () {
+    if (!session('pin_authenticated')) {
+        return redirect()->route('pin.login');
+    }
+
+    return app(DashboardController::class)->index();
+})->name('dashboard');
 
 Route::get('/gestion', [GestionController::class, 'index'])->name('gestion.index');
 Route::get('/gestion/classes', [GestionController::class, 'classes'])->name('gestion.classes');
