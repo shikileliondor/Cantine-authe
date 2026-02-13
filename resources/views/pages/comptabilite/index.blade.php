@@ -133,8 +133,35 @@
                         @csrf
                         <div><label class="text-sm">Montant (centimes)</label><input required name="amount_cents" type="number" min="1" class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"></div>
                         <div><label class="text-sm">Date</label><input required name="paid_at" type="date" value="{{ now()->toDateString() }}" class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"></div>
-                        <div><label class="text-sm">Période</label><input required name="period" type="text" placeholder="Ex: Janvier 2026" class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"></div>
-                        <div><label class="text-sm">Mode de paiement</label><input required name="payment_method" type="text" placeholder="Espèces" class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"></div>
+                        <div>
+                            <label class="text-sm" for="period">Période</label>
+                            <select required id="period" name="period" class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2">
+                                <option value="" disabled selected>Choisir un mois</option>
+                                <option value="Janvier">Janvier</option>
+                                <option value="Février">Février</option>
+                                <option value="Mars">Mars</option>
+                                <option value="Avril">Avril</option>
+                                <option value="Mai">Mai</option>
+                                <option value="Juin">Juin</option>
+                                <option value="Juillet">Juillet</option>
+                                <option value="Août">Août</option>
+                                <option value="Septembre">Septembre</option>
+                                <option value="Octobre">Octobre</option>
+                                <option value="Novembre">Novembre</option>
+                                <option value="Décembre">Décembre</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-sm" for="payment_method">Mode de paiement</label>
+                            <select required id="payment_method" name="payment_method" class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2">
+                                <option value="" disabled selected>Choisir un moyen de paiement</option>
+                                <option value="Espèces">Espèces</option>
+                                <option value="Mobile Money">Mobile Money</option>
+                                <option value="Virement bancaire">Virement bancaire</option>
+                                <option value="Carte bancaire">Carte bancaire</option>
+                                <option value="Chèque">Chèque</option>
+                            </select>
+                        </div>
                         <div class="md:col-span-2"><label class="text-sm">Note</label><textarea name="notes" rows="2" class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"></textarea></div>
                         <div class="md:col-span-2 flex justify-end gap-2"><button type="button" data-modal-close class="rounded-lg border border-slate-300 px-3 py-2">Annuler</button><button class="rounded-lg bg-indigo-600 px-3 py-2 text-white">Enregistrer</button></div>
                     </form>
