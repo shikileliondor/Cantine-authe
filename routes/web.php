@@ -1,13 +1,14 @@
 <?php
 
 use App\Http\Controllers\ComptabiliteController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ClasseController;
 use App\Http\Controllers\EleveController;
 use App\Http\Controllers\GestionController;
 use App\Http\Controllers\SettingsController;
 use Illuminate\Support\Facades\Route;
 
-Route::view('/', 'dashboard.index')->name('dashboard');
+Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
 Route::get('/gestion', [GestionController::class, 'index'])->name('gestion.index');
 Route::get('/gestion/classes', [GestionController::class, 'classes'])->name('gestion.classes');

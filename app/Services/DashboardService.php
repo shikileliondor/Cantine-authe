@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Discount;
 use App\Models\Payment;
+use App\Models\SchoolClass;
 use App\Models\Student;
 
 class DashboardService
@@ -20,6 +21,7 @@ class DashboardService
         $year = $this->yearService->getActiveYear();
 
         $studentsCount = Student::query()->where('school_year_id', $year->id)->count();
+        $classesCount = SchoolClass::query()->where('school_year_id', $year->id)->count();
 
         $expectedTotal = Student::query()
             ->where('school_year_id', $year->id)
@@ -32,6 +34,7 @@ class DashboardService
         return [
             'active_year' => $year,
             'total_students' => (int) $studentsCount,
+            'active_classes' => (int) $classesCount,
             'expected_total_cents' => (int) $expectedTotal,
             'paid_total_cents' => (int) $paidTotal,
             'discount_total_cents' => (int) $discountTotal,
