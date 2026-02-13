@@ -10,15 +10,29 @@ use RuntimeException;
 class YearService
 {
     /**
+     * Retourne l'année active si elle existe.
+     */
+    public function getActiveYearOrNull(): ?SchoolYear
+    {
+        return SchoolYear::query()->active()->first();
+    }
+
+    /**
      * Crée une année scolaire.
      */
     public function createYear(array $data): SchoolYear
     {
+        $shouldActivate = (bool) ($data['is_active'] ?? false);
+
+        if (! $this->getActiveYearOrNull()) {
+            $shouldActivate = true;
+        }
+
         return SchoolYear::query()->create([
             'name' => $data['name'],
             'starts_on' => $data['starts_on'],
             'ends_on' => $data['ends_on'],
-            'is_active' => (bool) ($data['is_active'] ?? false),
+            'is_active' => $shouldActivate,
         ]);
     }
 
@@ -27,7 +41,7 @@ class YearService
      */
     public function getActiveYear(): SchoolYear
     {
-        $activeYear = SchoolYear::query()->active()->first();
+        $activeYear = $this->getActiveYearOrNull();
 
         if (! $activeYear) {
             throw new RuntimeException('Aucune année scolaire active disponible.');
