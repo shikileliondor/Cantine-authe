@@ -1,20 +1,14 @@
 <?php
 
+use App\Http\Controllers\GestionController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'dashboard.index')->name('dashboard');
 
-Route::view('/eleves', 'pages.placeholder', [
-    'title' => 'Élèves',
-    'headerTitle' => 'Élèves',
-    'pageTitle' => 'Gestion des élèves',
-])->name('eleves.index');
+Route::get('/gestion', [GestionController::class, 'index'])->name('gestion.index');
 
-Route::view('/classes', 'pages.placeholder', [
-    'title' => 'Classes',
-    'headerTitle' => 'Classes',
-    'pageTitle' => 'Gestion des classes',
-])->name('classes.index');
+Route::redirect('/eleves', '/gestion')->name('eleves.index');
+Route::redirect('/classes', '/gestion')->name('classes.index');
 
 Route::view('/comptabilite', 'pages.placeholder', [
     'title' => 'Comptabilité',
