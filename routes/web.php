@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ComptabiliteController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'dashboard.index')->name('dashboard');
@@ -16,11 +17,9 @@ Route::view('/classes', 'pages.placeholder', [
     'pageTitle' => 'Gestion des classes',
 ])->name('classes.index');
 
-Route::view('/comptabilite', 'pages.placeholder', [
-    'title' => 'Comptabilité',
-    'headerTitle' => 'Comptabilité',
-    'pageTitle' => 'Comptabilité',
-])->name('comptabilite.index');
+Route::get('/comptabilite', [ComptabiliteController::class, 'index'])->name('comptabilite.index');
+Route::post('/comptabilite/eleves/{studentId}/versements', [ComptabiliteController::class, 'storePayment'])->name('comptabilite.payments.store');
+Route::post('/comptabilite/eleves/{studentId}/remises', [ComptabiliteController::class, 'storeDiscount'])->name('comptabilite.discounts.store');
 
 Route::view('/parametres', 'pages.placeholder', [
     'title' => 'Paramètres',
