@@ -37,11 +37,11 @@ Route::get('/auth/pin/setup', function () {
 
 Route::post('/auth/pin/setup', function (Request $request) {
     $validated = $request->validate([
-        'admin_code' => ['required', 'string'],
+        'admin_code' => ['required', 'digits:4'],
         'new_pin' => ['required', 'digits:4', 'confirmed'],
     ]);
 
-    $expectedAdminCode = (string) config('app.cantine_admin_code', 'admin1234');
+    $expectedAdminCode = (string) env('CANTINE_ADMIN_CODE', config('app.cantine_admin_code', '2603'));
 
     if ($validated['admin_code'] !== $expectedAdminCode) {
         return back()
