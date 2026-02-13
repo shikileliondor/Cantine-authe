@@ -22,6 +22,8 @@ Route::prefix('/api')->group(function (): void {
 });
 
 Route::get('/comptabilite', [ComptabiliteController::class, 'index'])->name('comptabilite.index');
+Route::get('/comptabilite/export/excel', [ComptabiliteController::class, 'exportExcel'])->name('comptabilite.export.excel');
+Route::get('/comptabilite/export/pdf', [ComptabiliteController::class, 'exportPdf'])->name('comptabilite.export.pdf');
 Route::post('/comptabilite/eleves/{studentId}/versements', [ComptabiliteController::class, 'storePayment'])->name('comptabilite.payments.store');
 Route::post('/comptabilite/eleves/{studentId}/remises', [ComptabiliteController::class, 'storeDiscount'])->name('comptabilite.discounts.store');
 

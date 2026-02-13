@@ -20,21 +20,40 @@
         @endif
 
         <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            <form method="GET" action="{{ route('comptabilite.index') }}" class="grid gap-4 lg:grid-cols-[1fr_auto] lg:items-end">
+            <form method="GET" action="{{ route('comptabilite.index') }}" class="grid gap-4 lg:grid-cols-[1fr_220px_auto] lg:items-end">
                 <div>
                     <label for="student_id" class="mb-1 block text-sm font-medium text-slate-700">Choisir un élève</label>
                     <select id="student_id" name="student_id" class="js-student-select w-full rounded-xl border border-slate-300 px-3 py-2 text-sm">
-                        @foreach ($rows as $row)
+                        @foreach ($studentOptions as $row)
                             <option value="{{ $row['student']->id }}" @selected($selectedStudentId === $row['student']->id)>
                                 {{ $row['student']->last_name }} {{ $row['student']->first_name }}
                             </option>
                         @endforeach
                     </select>
                 </div>
+
+                <div>
+                    <label for="status" class="mb-1 block text-sm font-medium text-slate-700">Statut</label>
+                    <select id="status" name="status" class="js-status-select w-full rounded-xl border border-slate-300 px-3 py-2 text-sm">
+                        <option value="" @selected($statusFilter === '')>Tous</option>
+                        <option value="Payé" @selected($statusFilter === 'Payé')>Payé</option>
+                        <option value="Non payé" @selected($statusFilter === 'Non payé')>Non payé</option>
+                    </select>
+                </div>
+
                 <button type="submit" class="rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700">
                     Filtrer
                 </button>
             </form>
+
+            <div class="mt-4 flex flex-wrap gap-2">
+                <a href="{{ route('comptabilite.export.pdf', ['student_id' => $selectedStudentId, 'status' => $statusFilter]) }}" class="rounded-xl border border-rose-300 bg-rose-50 px-3 py-2 text-xs font-semibold text-rose-700 hover:bg-rose-100">
+                    Export PDF
+                </a>
+                <a href="{{ route('comptabilite.export.excel', ['student_id' => $selectedStudentId, 'status' => $statusFilter]) }}" class="rounded-xl border border-emerald-300 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-700 hover:bg-emerald-100">
+                    Export Excel
+                </a>
+            </div>
         </section>
 
         <section class="rounded-2xl border border-slate-200 bg-white shadow-sm">
@@ -191,6 +210,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             $('.js-student-select').select2({ width: '100%' });
+            $('.js-status-select').select2({ width: '100%', minimumResultsForSearch: Infinity });
 
             const openers = document.querySelectorAll('[data-modal-target]');
             const closers = document.querySelectorAll('[data-modal-close]');
